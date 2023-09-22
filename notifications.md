@@ -1,4 +1,4 @@
-# Notifications
+<# Notifications
 
 - [Introduction](#introduction)
 - [Generating Notifications](#generating-notifications)
@@ -1512,5 +1512,37 @@ Once your notification channel class has been defined, you may return the class 
         public function toVoice(object $notifiable): VoiceMessage
         {
             // ...
+        }
+    }
+
+For extra type safety, you may want to create an interface for your channel and define a method that consumers must implement:
+
+    <?php
+
+    namespace App\Notifications;
+
+    interface Voiceable
+    {
+        public function toVoice(): T;
+    }
+
+This can then be used as such to make sure the notification recieved is parsable:
+
+    <?php
+
+    namespace App\Notifications;
+
+    use Illuminate\Notifications\Notification;
+
+    class VoiceChannel
+    {
+        /**
+         * Send the given notification.
+         */
+        public function send(object $notifiable, Notification&Voiceable $notification): void
+        {
+            $message = $notification->toVoice($notifiable);
+
+            // Send notification to the $notifiable instance...
         }
     }
